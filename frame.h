@@ -10,15 +10,14 @@ class Frame {
 public:
     INTG                    nMol;
     std::vector<Molecule>   mols;
-    std::vector<VecReal>    center;
 
     Frame(void);
-    Frame(const Frame &fra);
+    Frame(const Frame &frame);
 
     void        translate(VecReal R);
 
+    REAL        frame_mass() const; 
     VecReal     mass_center() const;
-
 };
 
 #endif  // FRAME_H
