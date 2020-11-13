@@ -60,11 +60,11 @@ Frame   PdbFile::get_one_frame()
 
         istringstream is(line);
 
-        // is >> atom >> atom_idx >> atom_name >> tip3u
-        //     >> mol_idx >> x >> y >> z >> zero1 >> zero2 >> u;
+        is >> atom >> atom_idx >> atom_name >> tip3u
+            >> mol_idx >> x >> y >> z >> zero1 >> zero2 >> u;
 
-        is >> atom >> atom_idx >> atom_name >> tip3u >> xstr
-            >> mol_idx >> x >> y >> z >> zero1 >> zero2;
+        // is >> atom >> atom_idx >> atom_name >> tip3u >> xstr
+        //     >> mol_idx >> x >> y >> z >> zero1 >> zero2;
 
         mol_idx -= 1;   // let molecule index start with 0
 
