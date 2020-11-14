@@ -37,6 +37,11 @@ x((0:nFrame)*(3*nH2O+1)+1) = [];
 y((0:nFrame)*(3*nH2O+1)+1) = [];
 z((0:nFrame)*(3*nH2O+1)+1) = [];
 
+% remove redundant structure
+x = x(1:3*nH2O*nFrame, :);
+y = y(1:3*nH2O*nFrame, :);
+z = z(1:3*nH2O*nFrame, :);
+
 % change Unit of length: nm
 x = x ./ 10.0;
 y = y ./ 10.0;
