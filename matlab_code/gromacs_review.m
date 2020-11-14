@@ -4,8 +4,10 @@ clear;clc;
 m_O = 16;
 m_H = 1;
 
-fqq = 138.95;
+temper  = 298;
+cont_R  = 8.314;
 
+fqq     = 138.95;
 q_O     = -0.834;
 q_H     = 0.417;
 epsla_O = 0.64;
@@ -13,9 +15,9 @@ epsla_H = 0.192;
 sigma_O = 0.354;
 sigma_H = 0.0449;
 
-q_h2o     = [q_O q_H q_H];
-epsla_h2o = [epsla_O epsla_H epsla_H];
-sigma_h2o = [sigma_O sigma_H sigma_H];
+q_OH2     = [q_O     q_H     q_H    ];
+epsla_OH2 = [epsla_O epsla_H epsla_H];
+sigma_OH2 = [sigma_O sigma_H sigma_H];
 
 dr  = 0.03;
 ndr = 100;
@@ -24,7 +26,7 @@ nH2O    = 500;
 nFrame  = 1000;
 
 
-%VMDÊèêÂèñÁöÑ1001-2000Èó¥ÁªìÊûÑ
+%VMDÃ·»°µƒ1001-2000º‰Ω·ππ
 fileID = fopen('H2O500.pdb','r');
 formatSpec = ' %*s %*s %*s %*s %*s %f %f %f %*s %*s %*s';
 cont = textscan(fileID,formatSpec);
@@ -81,8 +83,8 @@ h2o_z_center = reshape(sum(reshape(z_2.*mass_mask, 3, nH2O, nFrame)), nH2O, nFra
 distance = sqrt(h2o_x_center.^2 + h2o_y_center.^2 + h2o_z_center.^2);
 
 % calculate average density of molecule in each shell
-nNum = zeros(1, ndr);
-nDen = zeros(1, ndr);
+nNum = zeros(ndr, 1);
+nDen = zeros(ndr, 1);
 
 for i= 1 : ndr
     inR = dr * (i-1);
@@ -126,21 +128,21 @@ parfor m = 1 : nFrame
             Pa = Pi(ia,:);
             Pb = Pj(ja,:);
                     
-            sigmaij = (sigma_h20(ia) + sigma_h2o(ja)) / 2;
-            epslaij = sqrt(epsla_h2o(ia) * epsla_h2o(ja));
+            sigmaij = (sigma_OH2(ia) + sigma_OH2(ja)) / 2;
+            epslaij = sqrt(epsla_OH2(ia) * epsla_OH2(ja));
                     
             Pab = Pb - Pa;
             rab = sqrt(Pab*Pab');
                     
             force = epslaij * 12 * (sigmaij^12 / rab^13 - sigmaij^6 / rab^7)...
-                    + fqq * q_h2o(ia) * q_h2o(ja) / rab^2;
+                    + fqq * q_OH2(ia) * q_OH2(ja) / rab^2;
             
             fij = fij + force * Pab / rab;
                     
         end % end of ia
         end % end of ja
             
-        % ÊÄªÂäõÂú®Ë¥®ÂøÉ‰∏äÁöÑÊäïÂΩ±
+        % ◊‹¡¶‘⁄÷ –ƒ…œµƒÕ∂”∞
         ffij = (fij * Pij') /rij;
             
         % distance from line (i--j) to mass center (origin)
@@ -166,4 +168,7 @@ end % end of loop m (for each frame)
 
 R   = (1:ndr)' * dr;
 PU  = sum(pressU,2) / nFrame;
-plot(R,PU)
+PK  = nDen * cont_R * temper / 1000.0;
+PN  = PU + PK;
+
+plot(R,PU, R,PN);
